@@ -287,6 +287,22 @@ unsafe extern "C" fn roy_attack_air_lw_sound(fighter: &mut L2CAgentBase) {
     
 }
 
+unsafe extern "C" fn roy_attack_air_lw_expression(fighter: &mut L2CAgentBase) {
+    let lua_state = fighter.lua_state_agent;
+    let boma = fighter.boma();
+    if is_excute(fighter) {
+        AttackModule::set_attack_reference_joint_id(boma, Hash40::new("sword1"), AttackDirectionAxis(*ATTACK_DIRECTION_Z), AttackDirectionAxis(*ATTACK_DIRECTION_X), AttackDirectionAxis(*ATTACK_DIRECTION_Y));
+    }
+    frame(lua_state, 6.0);
+    if is_excute(fighter) {
+        ControlModule::set_rumble(boma, Hash40::new("rbkind_nohitm"), 0, false, *BATTLE_OBJECT_ID_INVALID as u32);
+    }
+    frame(lua_state, 7.0);
+    if is_excute(fighter) {
+        RUMBLE_HIT(fighter, Hash40::new("rbkind_slashm"), 0);
+    }
+}
+
 pub fn install() {
     smashline::Agent::new("roy")
         .acmd("game_attackairn", roy_attack_air_n_game)
@@ -300,5 +316,6 @@ pub fn install() {
         .acmd("game_attackairlw", roy_attack_air_lw_game)
         .acmd("effect_attackairlw", roy_attack_air_lw_effect)
         .acmd("sound_attackairlw", roy_attack_air_lw_sound)
+        .acmd("expression_attackairlw", roy_attack_air_lw_expression)
         .install();
 }
